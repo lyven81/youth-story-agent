@@ -1,14 +1,12 @@
 # youth_story_agent.py
 
 import streamlit as st
-from transformers import pipeline
 
 class YouthStoryBuilderAgent:
     def __init__(self):
         self.story_theme = None
         self.selected_idea = None
         self.story_outline = None
-        self.reviser = pipeline("text2text-generation", model="google/flan-t5-base")
 
     def classify_story_type(self, user_input):
         genres = ["成长", "冒险", "校园", "奇幻", "家庭", "悬疑", "爱情"]
@@ -41,11 +39,6 @@ class YouthStoryBuilderAgent:
                     "大家仍坚持完成任务。过程中，他们也感染了其他同学加入，最终让校园焕然一新，"
                     "而他们的友情与信念也变得更强。")
 
-    def revise_text(self, text):
-        prompt = f"请润色以下段落，使其更自然、生动：{text}"
-        output = self.reviser(prompt, max_length=256, do_sample=False)
-        return output[0]['generated_text']
-
 # === Streamlit App ===
 def main():
     st.title("📚 Youth Story Builder Agent")
@@ -74,13 +67,6 @@ def main():
             st.subheader("✍️ 第二章")
             chapter2 = agent.write_chapter("unit_2")
             st.text_area("第二章内容：", value=chapter2, height=150)
-
-            st.subheader("🛠️ 润色章节内容")
-            text_to_revise = st.text_area("输入要润色的段落：")
-            if st.button("润色并改写") and text_to_revise:
-                revised = agent.revise_text(text_to_revise)
-                st.success("润色结果：")
-                st.write(revised)
 
 if __name__ == "__main__":
     main()
